@@ -1,0 +1,55 @@
+.car-list {
+    min-height: 5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* horizontally centered */
+    justify-content: center;  /* vertically centered */
+    gap: 1.25rem;
+    background-color: #0d0d0d; /* dark background */
+    padding: 2rem;
+  }
+  
+  .car-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #1a1a1a; /* dark gray card */
+    color: #f1f1f1;           /* light text */
+    border-radius: 10px;
+    width: 800px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .car-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  }
+  
+  .car-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #ffffff;
+  }
+  
+  .car-specs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 1.5rem;
+  }
+  
+  .car-specs li {
+    color: #d0d0d0;
+    font-size: 1rem;
+  }
+  
+  .car-specs li strong {
+    color: #fff;
+    font-weight: 600;
+  }
+  

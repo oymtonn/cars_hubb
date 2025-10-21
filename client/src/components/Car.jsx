@@ -1,0 +1,19 @@
+import React from 'react';
+import '../css/Car.css';
+
+const Car = ({ name, wheels, exterior, interior, roof, totalcost }) => {
+  return (
+    <div className="car-card">
+      <h2 className="car-name">{name}</h2>
+      <ul className="car-specs">
+        <li><strong>Wheels:</strong> {wheels}</li>
+        <li><strong>Exterior:</strong> {exterior}</li>
+        <li><strong>Interior:</strong> {interior}</li>
+        <li><strong>Roof:</strong> {roof}</li>
+        <li><strong>Total Cost:</strong> ${totalcost}</li>
+      </ul>
+    </div>
+  );
+};
+
+export default Car;

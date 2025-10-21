@@ -1,11 +1,11 @@
 import { pool } from '../config/database.js';
 
-export const getItems = async (req, res) => {
+export const getItemsByCategory = async (req, res) => {
     let results;
     const { category } = req.query;
 
     try {
-        results = pool.query(`SELECT * FROM customItems WHERE category = $1`, [category]);
+        results = await pool.query(`SELECT * FROM customItems WHERE category = $1`, [category]);
     }
     catch (err) {
         console.log('Error getting items: ', err);
