@@ -43,13 +43,9 @@ Here's a walkthrough of implemented required features:
 GIF created with Adobe
 
 
-## Notes
-
-Describe any challenges encountered while building the app or any additional context you'd like to add.
-
 ## License
 
-Copyright [yyyy] [name of copyright owner]
+Copyright [2025] [Myo Aung]
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
