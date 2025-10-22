@@ -13,6 +13,20 @@ export const getCars = async (req, res) => {
     res.status(200).json(results.rows);
 }
 
+export const getCarById = async (req, res) => {
+    let results;
+    try {
+        const id = parseInt(req.params.id);
+        results = await pool.query('SELECT * FROM cars WHERE id = $1', [id]);
+
+    }
+    catch (err) {
+        console.log('Error getting car by id', err)
+    }
+
+    res.status(200).json(results.rows[0]);
+}
+
 export const createCar = async (req, res) => {
     try {
         const { name, wheels, exterior, interior, roof, totalcost } = req.body;
@@ -40,7 +54,7 @@ export const updateCar = async (req, res) => {
             [name, wheels, exterior, interior, roof, totalcost, id]
         )
 
-        res.status(200).json(results.rows);
+        res.status(200).json(results.rows[0]);
     }
     catch (err) {
         console.log(err);
