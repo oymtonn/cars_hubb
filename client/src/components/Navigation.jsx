@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../App.css';
 import '../css/Navigation.css';
 
 const fmtUSD = (v) => {
   if (typeof v === 'number') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
   if (v == null) return '';
-  // if it's a string like "$1,200", just return as-is; if it's "1200", pretty-print it
   const digits = String(v).replace(/[^\d.-]/g, '');
   return digits && digits !== String(v)
-    ? String(v) // already has symbols/commas
+    ? String(v)
     : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(digits || 0));
 };
 
@@ -18,6 +17,11 @@ const Navigation = () => {
   const [interior, setInterior] = useState([]);
   const [roof, setRoof] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const formRef = useRef(null);
+  const detailsRef = useRef(null);
+  const [posting, setPosting] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const getSpecs = async () => {
@@ -46,6 +50,64 @@ const Navigation = () => {
     getSpecs();
   }, []);
 
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    const form = formRef.current;
+    if (!form) return;
+
+    const wheelOption = form.wheels.options[form.wheels.selectedIndex];
+    const exteriorOption = form.exterior.options[form.exterior.selectedIndex];
+    const interiorOption = form.interior.options[form.interior.selectedIndex];
+    const roofOption = form.roof.options[form.roof.selectedIndex];
+
+    const totalcost =
+    Number(wheelOption.dataset.pricepoint || 0) +
+    Number(exteriorOption.dataset.pricepoint || 0) +
+    Number(interiorOption.dataset.pricepoint || 0) +
+    Number(roofOption.dataset.pricepoint || 0);
+
+
+    const payload = {
+      name: form.name.value.trim(),
+      wheels: form.wheels.value,
+      exterior: form.exterior.value,
+      interior: form.interior.value,
+      roof: form.roof.value,
+      totalcost: totalcost
+    };
+
+    if (!payload.name || !payload.wheels || !payload.exterior || !payload.interior || !payload.roof) {
+      return setError('Please complete all fields.');
+    }
+
+    try {
+      setPosting(true);
+      const res = await fetch('http://localhost:3001/cars', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`HTTP ${res.status}: ${txt}`);
+      }
+
+      form.reset();
+      if (detailsRef.current) detailsRef.current.open = false;
+      window.location = '/customcars';
+    } catch (err) {
+      console.error('Create failed:', err);
+      setError('Failed to create car.');
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  
+
   return (
     <nav className="nav">
       <ul className="nav-left">
@@ -54,10 +116,10 @@ const Navigation = () => {
 
       <ul className="nav-right">
         <li className="popdown">
-          <details>
+          <details ref={detailsRef}>
             <summary className="btn">Customize</summary>
             <div className="popdown-panel">
-              <form className="spec-form">
+              <form className="spec-form" ref={formRef} onSubmit={handleCreate}>
                 <div className="row">
                   <label>
                     Car name
@@ -66,68 +128,48 @@ const Navigation = () => {
                 </div>
 
                 <div className="spec-grid">
-                  {/* Wheels */}
                   <label>
                     Wheels
                     <select name="wheels" defaultValue="" disabled={loading}>
                       <option value="" disabled>{loading ? 'Loading…' : 'Select wheels'}</option>
                       {wheels.map((opt) => (
-                        <option
-                          key={opt.id ?? opt.name}
-                          value={opt.id ?? opt.name}
-                          data-pricepoint={opt.pricepoint}
-                        >
+                        <option key={opt.id ?? opt.name} value={opt.name} data-pricepoint={opt.pricepoint}>
                           {opt.name} {opt.pricepoint ? `(+${fmtUSD(opt.pricepoint)})` : ''}
                         </option>
                       ))}
                     </select>
                   </label>
 
-                  {/* Exterior */}
                   <label>
                     Exterior
                     <select name="exterior" defaultValue="" disabled={loading}>
                       <option value="" disabled>{loading ? 'Loading…' : 'Select exterior'}</option>
                       {exterior.map((opt) => (
-                        <option
-                          key={opt.id ?? opt.name}
-                          value={opt.id ?? opt.name}
-                          data-pricepoint={opt.pricepoint}
-                        >
+                        <option key={opt.id ?? opt.name} value={opt.name} data-pricepoint={opt.pricepoint}>
                           {opt.name} {opt.pricepoint ? `(+${fmtUSD(opt.pricepoint)})` : ''}
                         </option>
                       ))}
                     </select>
                   </label>
 
-                  {/* Interior */}
                   <label>
                     Interior
                     <select name="interior" defaultValue="" disabled={loading}>
                       <option value="" disabled>{loading ? 'Loading…' : 'Select interior'}</option>
                       {interior.map((opt) => (
-                        <option
-                          key={opt.id ?? opt.name}
-                          value={opt.id ?? opt.name}
-                          data-pricepoint={opt.pricepoint}
-                        >
+                        <option key={opt.id ?? opt.name} value={opt.name} data-pricepoint={opt.pricepoint}>
                           {opt.name} {opt.pricepoint ? `(+${fmtUSD(opt.pricepoint)})` : ''}
                         </option>
                       ))}
                     </select>
                   </label>
 
-                  {/* Roof */}
                   <label>
                     Roof
                     <select name="roof" defaultValue="" disabled={loading}>
                       <option value="" disabled>{loading ? 'Loading…' : 'Select roof'}</option>
                       {roof.map((opt) => (
-                        <option
-                          key={opt.id ?? opt.name}
-                          value={opt.id ?? opt.name}
-                          data-pricepoint={opt.pricepoint}
-                        >
+                        <option key={opt.id ?? opt.name} value={opt.name} data-pricepoint={opt.pricepoint}>
                           {opt.name} {opt.pricepoint ? `(+${fmtUSD(opt.pricepoint)})` : ''}
                         </option>
                       ))}
@@ -135,8 +177,12 @@ const Navigation = () => {
                   </label>
                 </div>
 
+                {error && <p style={{ color: 'tomato', marginTop: '0.5rem' }}>{error}</p>}
+
                 <div className="actions">
-                  <button type="button" className="btn primary">Create</button>
+                  <button type="submit" className="btn primary" disabled={posting || loading}>
+                    {posting ? 'Creating…' : 'Create'}
+                  </button>
                 </div>
               </form>
             </div>

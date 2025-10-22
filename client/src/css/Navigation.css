@@ -169,3 +169,28 @@ nav {
 .linkish {
   text-decoration: none;
 }
+
+
+/* Ensure anchor buttons always show white text */
+a.btn,
+a.btn:visited {
+  color: var(--color) !important;
+}
+
+/* Primary buttons should also force white text */
+.btn.primary,
+a.btn.primary,
+a.btn.primary:visited {
+  color: var(--color) !important;
+}
+
+/* Your link-style anchors too */
+a.linkish,
+a.linkish:visited {
+  color: var(--color) !important;
+}
+
+/* (optional) make buttons behave like buttons visually */
+a.btn {
+  display: inline-block;
+}
